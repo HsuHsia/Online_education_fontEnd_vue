@@ -67,6 +67,7 @@ export default {
         type: "success",
         message: "添加课程成功",
       });
+      this.$router.push({ path: "/subject/list" });
     },
 
     //上传失败

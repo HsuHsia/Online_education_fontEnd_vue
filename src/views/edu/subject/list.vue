@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import subJectApi from "@/api/edu/subject";
+
 export default {
   data() {
     return {
@@ -25,10 +27,15 @@ export default {
       data2: [],
       defaultProps: {
         children: "children",
-        label: "label",
+        label: "title",
       },
     };
   },
+
+  created() {
+    this.getAllClass();
+  },
+
   watch: {
     filterText(val) {
       this.$refs.tree2.filter(val);
@@ -36,9 +43,15 @@ export default {
   },
 
   methods: {
+    getAllClass() {
+      subJectApi.getAllSubject().then((res) => {
+        this.data2 = res.data.data;
+      });
+    },
+
     filterNode(value, data) {
       if (!value) return true;
-      return data.label.indexOf(value) !== -1;
+      return data.title.toLowerCase().indexOf(value) !== -1;
     },
   },
 };
