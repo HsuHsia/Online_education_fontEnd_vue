@@ -22,5 +22,30 @@ export default {
       method: 'post',
       data: courseInfo
     })
+  },
+  getPublishCourseInfo(courseId) {
+    return request({
+      url: `/eduservice/course/getPublishCourseInfo/${courseId}`,
+      method: "get"
+    })
+  },
+  publishCourse(courseId) {
+    return request({
+      url: `/eduservice/course/publishCourse/${courseId}`,
+      method: "post"
+    })
+  },
+  getCourseListPage(courseCurrentPage, coursepageLimit, courseQuery) {
+    return request({
+      url: `/eduservice/course/getCourseCondition/${courseCurrentPage}/${coursepageLimit}`,
+      method: 'post',
+      data: courseQuery
+    })
+  },
+  removeCourseById(courseId) {
+    return request({
+      url: `/eduservice/course/deleteCourseById/${courseId}`,
+      method: "delete",
+    })
   }
 }

@@ -30,6 +30,14 @@ export default {
       url: `/eduservice/video/deleteVideo/${VideoId}`,
       method: "delete",
     })
-  }
+  },
+
+  deleteAlyVideo(VideoId) {
+    return request({
+      url: `eduvod/video/deleteAlyVideo/${VideoId}`,
+      method: "delete",
+    })
+  },
+
 
 }

@@ -65,7 +65,30 @@
         </el-form-item>
 
         <el-form-item label="上传视频">
-          <!-- TODO -->
+          <el-upload
+            :on-success="handleVodUploadSuccess"
+            :on-remove="handleVodRemove"
+            :before-remove="beforeVodRemove"
+            :on-exceed="handleUploadExceed"
+            :file-list="fileList"
+            :action="BASE_API + '/eduvod/video/uploadAliyunVideo'"
+            :limit="1"
+            class="upload-demo"
+          >
+            <el-button size="small" type="primary">上传视频</el-button>
+
+            <el-tooltip placement="right-end">
+              <div slot="content">
+                最大支持1G，<br />
+                支持3GP、ASF、AVI、DAT、DV、FLV、F4V、<br />
+                GIF、M2T、M4V、MJ2、MJPEG、MKV、MOV、MP4、<br />
+                MPE、MPG、MPEG、MTS、OGG、QT、RM、RMVB、<br />
+                SWF、TS、VOB、WMV、WEBM 等视频格式上传
+              </div>
+
+              <i class="el-icon-question" />
+            </el-tooltip>
+          </el-upload>
         </el-form-item>
       </el-form>
 
@@ -152,6 +175,7 @@ export default {
         sort: 0,
         isFree: 0,
         videoSourceId: "",
+        videoOriginalName: "",
       },
       chapter: {
         title: "",
@@ -160,6 +184,8 @@ export default {
       saveBtnDisabled: false,
       courseId: "",
       chapterVideoList: [],
+      fileList: [],
+      BASE_API: process.env.BASE_API,
     };
   },
   created() {
@@ -169,6 +195,30 @@ export default {
     }
   },
   methods: {
+    // ====================================================视频操作====================================================
+    handleVodUploadSuccess(res, file, fileList) {
+      // 上传视频id赋值
+      this.video.videoSourceId = res.data.videoId;
+      // 上传视频名称赋值
+      this.video.videoOriginalName = file.name;
+    },
+    handleVodRemove() {
+      videoApi.deleteAlyVideo(this.video.videoSourceId).then((res) => {
+        this.$message({
+          type: "success",
+          message: "删除视频成功!",
+        });
+        this.fileList = [];
+        this.video.videoSourceId = "";
+        this.video.videoOriginalName = "";
+      });
+    },
+    beforeVodRemove(file, fileList) {
+      return this.$confirm(`确定删除视频 ${file.name}？`);
+    },
+    handleUploadExceed() {
+      this.$message.warning("想要重新上传视频，请先删除已上传的视频");
+    },
     // ====================================================小节操作====================================================
 
     openEditVideoDialog(chapterId) {
@@ -183,6 +233,9 @@ export default {
       this.video.sort = 0;
       this.video.isFree = 0;
       this.video.videoSourceId = "";
+      this.video.videoOriginalName = "";
+
+      this.fileList = [];
     },
 
     // 添加小节信息
@@ -216,6 +269,7 @@ export default {
       // 根据小节Id查询小节信息进行回显
       videoApi.getVideoInfo(videoId).then((res) => {
         this.video = res.data.video;
+        this.fileList = [{ name: this.video.videoOriginalName }];
       });
     },
 
